@@ -3,6 +3,10 @@ const Joi = require("joi");
 
 const { handleMongooseError } = require("../utils");
 
+const emailRegexp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+const numberRegexp =
+  /\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/;
+
 const contactSchema = new Schema(
   {
     name: {
@@ -19,6 +23,10 @@ const contactSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+    },
   },
   { versionKey: false, timestamps: true }
 );
@@ -28,14 +36,8 @@ contactSchema.post("save", handleMongooseError);
 const contactAddSchema = Joi.object({
   _id: Joi.string(),
   name: Joi.string().required(),
-  email: Joi.string()
-    .required()
-    .pattern(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/),
-  phone: Joi.string()
-    .required()
-    .pattern(
-      /\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/
-    ),
+  email: Joi.string().required().pattern(emailRegexp),
+  phone: Joi.string().required().pattern(numberRegexp),
   favorite: Joi.boolean(),
   createdAt: Joi.string(),
   updatedAt: Joi.string(),

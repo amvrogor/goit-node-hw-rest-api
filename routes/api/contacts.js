@@ -1,8 +1,9 @@
 const express = require("express");
 const contactsControllers = require("../../controllers/contacts-controllers");
-const { isValidId } = require("../../middlewares");
+const { isValidId, authenticate } = require("../../middlewares");
 
 const router = express.Router();
+router.use(authenticate);
 
 router.get("/", contactsControllers.getAllContacts);
 
