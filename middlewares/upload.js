@@ -16,13 +16,13 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage,
   limits: {},
-  fileFilter: (req, file, cb) => {
-    const { mimetype } = file;
-    if (mimetype !== "image/jpeg" || mimetype !== "image/png") {
-      cb(HttpError(400, "Format file must be JPEG, JPG, PNG only"), false);
-    }
-    cb(null, true);
-  },
+  // fileFilter: (req, file, cb) => {
+  //   const { mimetype } = file;
+  //   if (mimetype !== "image/jpeg" || mimetype !== "image/png") {
+  //     cb(HttpError(400, "Format file must be JPEG, JPG, PNG only"), false);
+  //   }
+  //   cb(null, true);
+  // },
 });
 
 module.exports = upload;
