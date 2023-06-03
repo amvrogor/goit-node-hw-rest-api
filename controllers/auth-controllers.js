@@ -2,7 +2,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const fs = require("fs/promises");
-const { promisify } = require("util");
 const gravatar = require("gravatar");
 const {
   User,
@@ -11,7 +10,7 @@ const {
   updateSubscriptionSchema,
 } = require("../models/user");
 const { HttpError } = require("../helpers");
-const { handleAvatar } = require("../utils/handleAvatar");
+const handleAvatar = require("../utils/handleAvatar");
 
 const { SECRET_KEY } = process.env;
 
@@ -120,18 +119,19 @@ const updateSubscription = async (req, res, next) => {
 };
 
 const avatarsDir = path.resolve("public", "avatars");
-const rename = promisify(fs.rename);
 
 const updateAvatar = async (req, res, next) => {
   try {
+    const { _id } = req.user;
     const { path: tempUpload, filename } = req.file;
     await handleAvatar(tempUpload);
-    const { _id } = req.user;
     const resultUpload = path.join(avatarsDir, filename);
-    await rename(tempUpload, resultUpload);
+    await fs.rename(tempUpload, resultUpload);
     const avatarURL = path.join("avatars", filename);
     await User.findByIdAndUpdate(_id, { avatarURL });
-    res.status(200).json({ avatarURL });
+    res.status(200).json({
+      avatarURL,
+    });
   } catch (error) {
     next(error);
   }

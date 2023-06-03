@@ -13,16 +13,18 @@ const storage = multer.diskStorage({
   },
 });
 
+const fileFilter = (req, file, cb) => {
+  const { mimetype } = file;
+  if (mimetype !== "image/jpeg") {
+    cb(HttpError(400, "Format file must be JPEG, JPG only"), false);
+  }
+  cb(null, true);
+};
+
 const upload = multer({
   storage,
-  limits: {},
-  // fileFilter: (req, file, cb) => {
-  //   const { mimetype } = file;
-  //   if (mimetype !== "image/jpeg" || mimetype !== "image/png") {
-  //     cb(HttpError(400, "Format file must be JPEG, JPG, PNG only"), false);
-  //   }
-  //   cb(null, true);
-  // },
+  limits: { fileSize: 1024 * 1024 },
+  fileFilter,
 });
 
 module.exports = upload;
